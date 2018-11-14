@@ -15,6 +15,7 @@ $http->on('WorkerStart',function ($server,$worker_id){
     //require __DIR__ . '/../thinkphp/start.php';
 });
 $http->on('request',function ($request,$response) use($http){
+    $_SERVER =[];
     if(isset($request->server))
     {
         foreach ($request->server as $k =>$v)
@@ -23,6 +24,7 @@ $http->on('request',function ($request,$response) use($http){
         }
 
     }
+
     if(isset($request->header))
     {
         foreach ($request->header as $k =>$v)
@@ -31,7 +33,7 @@ $http->on('request',function ($request,$response) use($http){
         }
 
     }
-
+    $_GET =[];
     if(isset($request->get))
     {
         foreach ($request->get as $k =>$v)
@@ -40,6 +42,7 @@ $http->on('request',function ($request,$response) use($http){
         }
 
     }
+    $_POST =[];
     if(isset($request->post))
     {
         foreach ($request->post as $k =>$v)
