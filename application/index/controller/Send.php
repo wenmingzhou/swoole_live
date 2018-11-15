@@ -13,7 +13,8 @@ class Send
     {
         //echo "555";
         //表字段用_  php变量驼峰
-        $phoneNum =request()->get('phone_num',0,'intval');
+        //$phoneNum =request()->get('phone_num',0,'intval');
+        $phoneNum =intval($_GET['phone_num']);
         //status 状态 message  data
         if(empty($phoneNum))
         {
