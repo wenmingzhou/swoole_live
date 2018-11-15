@@ -422,6 +422,7 @@ class Request
             $this->pathinfo = empty($_SERVER['PATH_INFO']) ? '/' : ltrim($_SERVER['PATH_INFO'], '/');
         //}
 
+
         return $this->pathinfo;
     }
 
@@ -446,6 +447,7 @@ class Request
                 $this->path = preg_replace('/\.' . $this->ext() . '$/i', '', $pathinfo);
             }
         //}
+
 
         return $this->path;
     }

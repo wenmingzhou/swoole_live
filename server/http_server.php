@@ -16,6 +16,7 @@ $http->on('WorkerStart',function ($server,$worker_id){
 });
 $http->on('request',function ($request,$response) use($http){
     $_SERVER =[];
+
     if(isset($request->server))
     {
         foreach ($request->server as $k =>$v)
@@ -59,7 +60,7 @@ $http->on('request',function ($request,$response) use($http){
     }catch (\Exception $e){
         //todo
     }
-    echo "-action-".request()->action().PHP_EOL;
+    //echo "-action-".request()->action().PHP_EOL;
     $res =ob_get_contents();
     ob_end_clean();
 
