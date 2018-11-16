@@ -5,6 +5,7 @@ class Index
 {
     public function index()
     {
+        return "";
         echo  "hello,singa".PHP_EOL;
     }
 

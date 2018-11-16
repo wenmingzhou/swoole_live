@@ -12,39 +12,41 @@ class http {
         $this->http->set([
             'enable_static_handler' => true,
             'document_root' => '/usr/local/nginx/html/swoole_live/public/static',
-            'worker_num' =>4,
-            'task_worker_num' =>4,
+            'worker_num' =>2,
+            'task_worker_num' =>2,
         ]);
 
         $this->http->on("workerstart",[$this,'onWorkerStart']);
         $this->http->on("request",[$this,'onRequest']);
         $this->http->on("task",[$this,'onTask']);
         $this->http->on("finish",[$this,'onFinish']);
+        $this->http->on("close",[$this,'onClose']);
         $this->http->start();
     }
 
-
-    // 自动加载类
-    public function loadClass($className)
+    public function onWorkerStart($server,$worker_id)
     {
-        $file = APP_PATH . str_replace('\\', '/', $className) . '.php';
-        include $file;
-
-        // 这里可以加入判断，如果名为$className的类、接口或者性状不存在，则在调试模式下抛出错误
+        //定义目录常量
+        define('APP_PATH', __DIR__ . '/../application/');
+        //加载框架里面的文件
+        //require __DIR__ . '/../thinkphp/base.php';
+        require __DIR__ . '/../thinkphp/start.php';
     }
 
+
+
+
     public function onTask($serv,$taskId,$workerId,$data){
-        $this->loadClass('common\lib\task\Task');
-        //spl_autoload_register(array('http', 'loadClass'));
+
         //分发 task 任务机制，让不同的任务 走不同的逻辑
         //return ;
         $obj =new Utask();
-        $obj->sendSms($data['data']);
+        //$obj->sendSms($data['data']);
 
         $method =$data['method'];
         $flag =$obj->$method($data['data']);
 
-        return $flag;
+        echo  $flag;
         /*
         $className =$_SERVER['PWD'].'/../application/common/lib/task/Task';
         $file =  str_replace('\\', '/', $className) . '.php';
@@ -71,19 +73,7 @@ class http {
 
 
 
-    public function onFinish($serv,$taskId,$data){
-        echo "taskId:$taskId\n";
-        echo "finish-data-succes:{$data}\n";
-    }
 
-    public function onWorkerStart($server,$worker_id)
-    {
-        //定义目录常量
-        define('APP_PATH', __DIR__ . '/../application/');
-        //加载框架里面的文件
-        require __DIR__ . '/../thinkphp/base.php';
-        //require __DIR__ . '/../thinkphp/start.php';
-    }
     public function onRequest($request,$response){
         $_SERVER =[];
 
@@ -140,6 +130,17 @@ class http {
         $response->end($res);
 
         //$http->close(false);
+    }
+
+    public function onFinish($serv,$taskId,$data){
+        echo "taskId:$taskId\n";
+        echo "finish-data-succes:{$data}\n";
+    }
+
+
+    public function onClose($ws,$fd)
+    {
+        echo "clientid:{$fd}"."\n";
     }
 
 }
