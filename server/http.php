@@ -1,5 +1,6 @@
 <?php
-#use app\common\lib\task\Task;
+use app\common\lib\task\Task as Utask;
+
 class http {
     CONST HOST ='0.0.0.0';
     CONST PORT =8811;
@@ -22,10 +23,29 @@ class http {
         $this->http->start();
     }
 
+
+    // 自动加载类
+    public function loadClass($className)
+    {
+        $file = APP_PATH . str_replace('\\', '/', $className) . '.php';
+        include $file;
+
+        // 这里可以加入判断，如果名为$className的类、接口或者性状不存在，则在调试模式下抛出错误
+    }
+
     public function onTask($serv,$taskId,$workerId,$data){
-
+        $this->loadClass('common\lib\task\Task');
+        //spl_autoload_register(array('http', 'loadClass'));
         //分发 task 任务机制，让不同的任务 走不同的逻辑
+        //return ;
+        $obj =new Utask();
+        $obj->sendSms($data['data']);
 
+        $method =$data['method'];
+        $flag =$obj->$method($data['data']);
+
+        return $flag;
+        /*
         $className =$_SERVER['PWD'].'/../application/common/lib/task/Task';
         $file =  str_replace('\\', '/', $className) . '.php';
         include($file);
@@ -33,6 +53,7 @@ class http {
         $method =$data['method'];
         $flag =$obj->$method($data['data']);
         return $flag;
+        */
         /*
         try{
             $phoneNum =$data['phone'];
@@ -43,8 +64,6 @@ class http {
             //return Util::show(config('code.error'),'send error');
         }
         */
-
-
         print_r($data)."\n";
         sleep(100);
         return " on task finish";

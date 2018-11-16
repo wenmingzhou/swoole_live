@@ -32,9 +32,6 @@ class Send
             ]
         ];
         $_POST['http_server']->task($taskData);
-
-
-
         //发送给第三方
         /*
         try{
@@ -44,7 +41,6 @@ class Send
             return Util::show(config('code.error'),'send error');
         }
         */
-        return Util::show(config('code.success'),'ok');
         //记录在redis
         $redis  =new \Swoole\Coroutine\Redis();
 
