@@ -51,4 +51,28 @@ class Predis
         }
         return $this->redis->get($key);
     }
+
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function sAdd($key,$value){
+        return $this->redis->sAdd($key,$value);
+    }
+
+    public function sRem($key,$value)
+    {
+        return $this->redis->sRem($key,$value);
+    }
+
+    public function sMembers($key)
+    {
+        return $this->redis->sMembers($key);
+    }
+
+    public function __call($name, $arguments)
+    {
+        $this->redis->$name($arguments[0],$arguments[1]);
+    }
 }

@@ -3,7 +3,7 @@ namespace app\common\lib\task;
 use app\common\lib\redis\Predis;
 use app\common\lib\Redis;
 /**
- * 代表的是 swoole 里面的后续所有的task异步任务 都放在这里来
+ * 浠ｈ〃鐨勬槸 swoole 閲岄潰鐨勫悗缁墍鏈夌殑task寮傛浠诲姟 閮芥斁鍦ㄨ繖閲屾潵
  * Created by PhpStorm.
  * User: Administrator
  * Date: 2018/11/15
@@ -12,7 +12,7 @@ use app\common\lib\Redis;
 
 class Task{
 
-    /**异步发布
+    /**寮傛鍙戝竷
      * @param $data
      */
     public function sendSms($data)

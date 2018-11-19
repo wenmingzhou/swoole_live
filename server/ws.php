@@ -29,7 +29,9 @@ class Ws {
 
     public function onOpen($ws,$request)
     {
-        echo 'clientid'.$request->fd."\n";
+        \app\common\lib\redis\Predis::getInstance()->sAdd(config('redis.live_game_key'),$request->fd);
+        // fd æ”¾å…¥åˆ°redis æœ‰åºé›†åˆé‡Œé¢;
+        echo 'Start_clientid'.$request->fd."\n";
     }
 
     public function onMessage($ws,$frame)
@@ -43,9 +45,9 @@ class Ws {
 
     public function onWorkerStart($server,$worker_id)
     {
-        //¶¨ÒåÄ¿Â¼³£Á¿
+        //å®šä¹‰ç›®å½•å¸¸é‡
         define('APP_PATH', __DIR__ . '/../application/');
-        //¼ÓÔØ¿ò¼ÜÀïÃæµÄÎÄ¼þ
+        //åŠ è½½æ¡†æž¶é‡Œé¢çš„æ–‡ä»¶
         //require __DIR__ . '/../thinkphp/base.php';
         require __DIR__ . '/../thinkphp/start.php';
     }
@@ -55,7 +57,7 @@ class Ws {
 
     public function onTask($serv,$taskId,$workerId,$data){
 
-        //·Ö·¢ task ÈÎÎñ»úÖÆ£¬ÈÃ²»Í¬µÄÈÎÎñ ×ß²»Í¬µÄÂß¼­
+        //åˆ†å‘ task ä»»åŠ¡æœºåˆ¶ï¼Œè®©ä¸åŒçš„ä»»åŠ¡ èµ°ä¸åŒçš„é€»è¾‘
         //return ;
         $obj =new Utask();
         //$obj->sendSms($data['data']);
@@ -140,7 +142,7 @@ class Ws {
         }
 
         $_POST['http_server'] =$this->ws;
-        // Ö´ÐÐÓ¦ÓÃ²¢ÏìÓ¦
+        // æ‰§è¡Œåº”ç”¨å¹¶å“åº”
         ob_start();
         try{
             think\Container::get('app', [APP_PATH])
@@ -166,7 +168,9 @@ class Ws {
 
     public function onClose($ws,$fd)
     {
-        echo "clientid:{$fd}"."\n";
+        // fd ä»Žredis æœ‰åºé›†åˆåˆ é™¤;
+        \app\common\lib\redis\Predis::getInstance()->sRem(config('redis.live_game_key'),$fd);
+        echo "Close_client_id:{$fd}"."\n";
     }
 
 }
