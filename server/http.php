@@ -67,7 +67,7 @@ class http {
         }
         */
         print_r($data)."\n";
-        sleep(100);
+        sleep(10);
         return " on task finish";
     }
 

@@ -32,6 +32,7 @@ class Send
             ]
         ];
         $_POST['http_server']->task($taskData);
+        //return '';
         //发送给第三方
         /*
         try{
@@ -40,13 +41,15 @@ class Send
         }catch (\Exception $e){
             return Util::show(config('code.error'),'send error');
         }
-        */
+
         //记录在redis
+
+
         $redis  =new \Swoole\Coroutine\Redis();
 
         $redis->connect(config('redis.host'),config('redis.port'));
         $redis->set(Redis::smsKey($phoneNum),$code,config('redis.out_time'));
-
+        */
         return Util::show(config('code.success'),'');
 
     }

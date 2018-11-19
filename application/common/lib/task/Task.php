@@ -1,6 +1,7 @@
 <?php
 namespace app\common\lib\task;
-
+use app\common\lib\redis\Predis;
+use app\common\lib\Redis;
 /**
  * 代表的是 swoole 里面的后续所有的task异步任务 都放在这里来
  * Created by PhpStorm.
@@ -25,6 +26,10 @@ class Task{
 
             return Util::show(config('code.error'),'send error');
         }
+
+
+        Predis::getInstance()->set(Redis::smsKey($phoneNum),$code,config('redis.out_time'));
+
 
     }
 
