@@ -1,28 +1,45 @@
 <?php
 use app\common\lib\task\Task as Utask;
 
-class http {
+class Ws {
     CONST HOST ='0.0.0.0';
     CONST PORT =8811;
-    public $http =null;
+    public $ws =null;
 
 
     public function __construct(){
-        $this->http =new swoole_http_server(self::HOST, self::PORT);
-        $this->http->set([
+        $this->ws =new swoole_websocket_server(self::HOST, self::PORT);
+        $this->ws->set([
             'enable_static_handler' => true,
             'document_root' => '/usr/local/nginx/html/swoole_live/public/static',
             'worker_num' =>2,
             'task_worker_num' =>2,
         ]);
 
-        $this->http->on("workerstart",[$this,'onWorkerStart']);
-        $this->http->on("request",[$this,'onRequest']);
-        $this->http->on("task",[$this,'onTask']);
-        $this->http->on("finish",[$this,'onFinish']);
-        $this->http->on("close",[$this,'onClose']);
-        $this->http->start();
+        $this->ws->on("workerstart",[$this,'onWorkerStart']);
+        $this->ws->on("open",[$this,'onOpen']);
+        $this->ws->on("message",[$this,'onMessage']);
+
+        $this->ws->on("request",[$this,'onRequest']);
+        $this->ws->on("task",[$this,'onTask']);
+        $this->ws->on("finish",[$this,'onFinish']);
+        $this->ws->on("close",[$this,'onClose']);
+        $this->ws->start();
     }
+
+    public function onOpen($ws,$request)
+    {
+        echo 'clientid'.$request->fd."\n";
+    }
+
+    public function onMessage($ws,$frame)
+    {
+        echo "set-push-message:{$frame->data}\n";
+        //$ws->task($data)."\n";
+        $ws->push($frame->fd,"server-push:".date("Y-m-d H:i:s"))."\n";
+    }
+
+
 
     public function onWorkerStart($server,$worker_id)
     {
@@ -122,7 +139,7 @@ class http {
             }
         }
 
-        $_POST['http_server'] =$this->http;
+        $_POST['http_server'] =$this->ws;
         // 执行应用并响应
         ob_start();
         try{
@@ -153,4 +170,4 @@ class http {
     }
 
 }
-$obj =new Http();
+$obj =new Ws();
