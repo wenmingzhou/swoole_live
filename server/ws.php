@@ -4,6 +4,7 @@ use app\common\lib\task\Task as Utask;
 class Ws {
     CONST HOST ='0.0.0.0';
     CONST PORT =8811;
+    CONST CHART_PORT =8812;
     public $ws =null;
 
 
@@ -11,6 +12,7 @@ class Ws {
 
 
         $this->ws =new swoole_websocket_server(self::HOST, self::PORT);
+        $this->ws->listen(self::HOST, self::CHART_PORT,SWOOLE_SOCK_TCP);
         $this->ws->set([
             'enable_static_handler' => true,
             'document_root' => '/usr/local/nginx/html/swoole_live/public/static',
@@ -31,6 +33,7 @@ class Ws {
 
     public function onOpen($ws,$request)
     {
+        print_r($ws);
         \app\common\lib\redis\Predis::getInstance()->sAdd(config('redis.live_game_key'),$request->fd);
         // fd 放入到redis 有序集合里面;
         echo 'Start_clientid'.$request->fd."\n";
