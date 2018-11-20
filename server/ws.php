@@ -8,6 +8,8 @@ class Ws {
 
 
     public function __construct(){
+
+
         $this->ws =new swoole_websocket_server(self::HOST, self::PORT);
         $this->ws->set([
             'enable_static_handler' => true,
@@ -50,6 +52,9 @@ class Ws {
         //加载框架里面的文件
         //require __DIR__ . '/../thinkphp/base.php';
         require __DIR__ . '/../thinkphp/start.php';
+
+        //重启服务器时，删除指定的key
+        \app\common\lib\redis\Predis::getInstance()->del(config('redis.live_game_key'));
     }
 
 

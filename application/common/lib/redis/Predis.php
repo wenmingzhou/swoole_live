@@ -52,6 +52,14 @@ class Predis
         return $this->redis->get($key);
     }
 
+    public function del($key)
+    {
+        if(!$key){
+            return '';
+        }
+        return $this->redis->del($key);
+    }
+
     /**
      * @param $key
      * @param $value
