@@ -68,7 +68,7 @@ class Ws {
         //$obj->sendSms($data['data']);
 
         $method =$data['method'];
-        $flag =$obj->$method($data['data']);
+        $flag =$obj->$method($data['data'],$serv);
 
         echo  $flag;
         /*

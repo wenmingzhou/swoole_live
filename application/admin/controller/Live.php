@@ -32,14 +32,15 @@ class Live
             'image' =>!empty($_GET['image']) ?  $_GET['image']:'',
         ];
 
+        $taskData =[
+            'method' =>'pushLive',
+            'data' =>$data,
+        ];
 
-       $clients =Predis::getInstance()->sMembers(config("redis.live_game_key"));
+        $_POST['http_server']->task($taskData);
+        return Util::show(config('code.success'),'ok');
 
 
-       foreach ($clients as $fd)
-       {
-           $_POST['http_server']->push($fd,json_encode($data));
-       }
        //$_POST['http_server']->push(7,'hello-push-data');
     }
 
