@@ -20,6 +20,7 @@ class Ws {
             'task_worker_num' =>2,
         ]);
 
+        $this->ws->on("start",[$this,'onStart']);
         $this->ws->on("workerstart",[$this,'onWorkerStart']);
         $this->ws->on("open",[$this,'onOpen']);
         $this->ws->on("message",[$this,'onMessage']);
@@ -31,9 +32,14 @@ class Ws {
         $this->ws->start();
     }
 
+    public function  onStart($ws)
+    {
+        swoole_set_process_name("live_master");
+    }
+
     public function onOpen($ws,$request)
     {
-        print_r($ws);
+        //print_r($ws);
         \app\common\lib\redis\Predis::getInstance()->sAdd(config('redis.live_game_key'),$request->fd);
         // fd 放入到redis 有序集合里面;
         echo 'Start_clientid'.$request->fd."\n";
@@ -103,7 +109,12 @@ class Ws {
 
     public function onRequest($request,$response){
         $_SERVER =[];
-
+        if($request->server['request_uri']=='/favicon.ico')
+        {
+            $response->status(404);
+            $response->end();
+            return;
+        }
         if(isset($request->server))
         {
             foreach ($request->server as $k =>$v)
@@ -148,7 +159,7 @@ class Ws {
                 $_FILES[$k] =$v;
             }
         }
-
+        $this->writeLog();
         $_POST['http_server'] =$this->ws;
         // 执行应用并响应
         ob_start();
@@ -179,6 +190,25 @@ class Ws {
         // fd 从redis 有序集合删除;
         \app\common\lib\redis\Predis::getInstance()->sRem(config('redis.live_game_key'),$fd);
         echo "Close_client_id:{$fd}"."\n";
+    }
+
+    /**
+     * 记录日志
+     */
+    public function writeLog()
+    {
+        $datas =array_merge(['date'=>date("Ymd H:i:s")],$_GET,$_POST,$_SERVER);
+        $logs ="";
+        foreach ($datas as $key =>$val)
+        {
+            $logs .=$key.":".$val." ";
+        }
+        //echo APP_PATH.'../runtime/log/'.date("Ym")."/".date("d")."_access.log";return;
+        swoole_async_writefile(APP_PATH.'../runtime/log/'.date("Ym")."/".date("d")."_access.log",$logs.PHP_EOL,function ($filename){
+
+        },FILE_APPEND);
+        //echo $logs;
+
     }
 
 }

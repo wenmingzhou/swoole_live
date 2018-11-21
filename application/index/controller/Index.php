@@ -5,6 +5,7 @@ class Index
 {
     public function index()
     {
+
         return "";
         echo  "hello,singa".PHP_EOL;
     }
@@ -13,6 +14,12 @@ class Index
     {
         return 'hello,' . $name;
     }
+
+    public function singa($name = 'singa')
+    {
+        return 'hello,' . $name;
+    }
+
 
 
 }
